@@ -1,9 +1,7 @@
 package com.liquidcore7.textmerge.chain
 
 class Word(val word: String, val isSentenceBegin: java.lang.Boolean, val isSentenceEnd: java.lang.Boolean, val source: String) {
-  def partialString: String = s"""word: "$word", isSentenceBegin: $isSentenceBegin, isSentenceEnd: $isSentenceEnd"""
-  override def toString: String = partialString + s""", source: "$source", id: $hashCode"""
-  override def hashCode: Int = word.concat(source).hashCode
+  override def toString: String = "word: \"" + word + "\", source: \"" + source + "\""
 }
 
 object Word {
@@ -12,11 +10,13 @@ object Word {
 
 object NeoQueries {
 
-  def populateKey: String = "create constraint on (w: Words) assert w.id is unique"
+  def populateKey: String = "create index on :Words(word, source)"
 
   def createAsChildOf(parent: Word, child: Word): String =
     s"""merge (parent: Words {$parent})
+       |on create set parent.isSentenceBegin = ${parent.isSentenceBegin}, parent.isSentenceEnd = ${parent.isSentenceEnd}
        |merge (child: Words {$child})
+       |on create set child.isSentenceBegin = ${child.isSentenceBegin}, child.isSentenceEnd = ${child.isSentenceEnd}
        |merge (parent)-[w: Weight]->(child)
        |on create set w.weight = 1
        |on match set w.weight = w.weight + 1
@@ -35,7 +35,7 @@ object NeoQueries {
      """.stripMargin
 
   def bestMatchesFor(parent: Word, limit: Int): String =
-    s"""match (:Words {${parent.partialString}})-[w: Weight]->(child: Words)
+    s"""match (:Words {${parent.word}})-[w: Weight]->(child: Words)
        |return child.word as word,
        |child.isSentenceBegin as isSentenceBegin,
        |child.isSentenceEnd as isSentenceEnd,
@@ -51,7 +51,7 @@ object NeoQueries {
 
 
   def hasAlternativeSources(origSourcePath: Iterable[Word]): String =
-    s"""return size(filter(path in ${origSourcePath.map{_.partialString}.mkString("(:Words {", "})-->(:Words {", "})")}
+    s"""return size(filter(path in ${origSourcePath.map{_.word}.mkString("(:Words {", "})-->(:Words {", "})")}
               |where head(nodes(path)).source <> "${origSourcePath.head.source}")) > 0 as hasAltSrc
      """.stripMargin
 

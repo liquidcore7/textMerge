@@ -2,6 +2,7 @@ package com.liquidcore7.textmerge
 
 import java.io.File
 import java.util.Objects
+import java.util.concurrent.{ExecutorService, Executors, TimeUnit}
 
 import com.liquidcore7.textmerge.chain.{ChainStore, Evaluate, Train}
 
@@ -19,7 +20,10 @@ object ArgsRouter {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) println(usage)
     else {args(0) match {
-      case "train" => Train(args.tail.map{new File(_)}.filterNot{Objects.isNull}.toIterable); println("training started")
+      case "train" => println("training started")
+        Train(args.tail.map{new File(_)}.filterNot{Objects.isNull}.toIterable)
+        Executors.newSingleThreadScheduledExecutor.scheduleAtFixedRate(() => println(ChainStore().statUnit.toString), 1, 1, TimeUnit.SECONDS)
+
       case "cleanup" => args.tail.foreach{ChainStore().clearSource(_)}; println("Cleaned")
       case "evalstr" => println(Evaluate.sentence)
       case "evalstrm" => println(Evaluate.markovSentence)

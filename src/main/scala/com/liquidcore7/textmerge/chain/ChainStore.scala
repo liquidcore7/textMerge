@@ -7,7 +7,9 @@ import org.neo4j.driver.v1._
 
 import scala.collection.JavaConverters._
 
-class ChainStore(private val session: Session) {
+class ChainStore(private val session: Session) extends WithStats[(Int, Int)] {
+
+  override val statUnit: Stats[(Int, Int)] = new InsertionProgress
 
   object ResultToCC {
     def apply[CC](record: Record)(implicit classTag: ClassTag[CC]): CC = {
@@ -20,8 +22,11 @@ class ChainStore(private val session: Session) {
   def populateKey(): Unit = session.run(NeoQueries.populateKey)
 
   def insertWord(word: Word, withParent: Word): Unit = {
+    statUnit.transform{case (a, b) => (a, b + 1)}
     session.runAsync(NeoQueries.createAsChildOf(withParent, word))
+      .whenComplete{(_, _) => statUnit.transform{case (a, b) => (a + 1, b)}}
   }
+
   def possibleAfter(word: Word, limit: Int = 1): IndexedSeq[Word] = session.run(NeoQueries.bestMatchesFor(word, limit))
                                                       .list().asScala.map{ResultToCC[Word](_)}.toIndexedSeq
 
