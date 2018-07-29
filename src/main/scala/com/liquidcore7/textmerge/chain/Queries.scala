@@ -35,7 +35,7 @@ object NeoQueries {
      """.stripMargin
 
   def bestMatchesFor(parent: Word, limit: Int): String =
-    s"""match (:Words {${parent.word}})-[w: Weight]->(child: Words)
+    s"""match (:Words {word: "${parent.word}"})-[w: Weight]->(child: Words)
        |return child.word as word,
        |child.isSentenceBegin as isSentenceBegin,
        |child.isSentenceEnd as isSentenceEnd,
@@ -51,7 +51,7 @@ object NeoQueries {
 
 
   def hasAlternativeSources(origSourcePath: Iterable[Word]): String =
-    s"""return size(filter(path in ${origSourcePath.map{_.word}.mkString("(:Words {", "})-->(:Words {", "})")}
+    s"""return size(filter(path in ${origSourcePath.map{"word: \"" + _.word + "\""}.mkString("(:Words {", "})-->(:Words {", "})")}
               |where head(nodes(path)).source <> "${origSourcePath.head.source}")) > 0 as hasAltSrc
      """.stripMargin
 
