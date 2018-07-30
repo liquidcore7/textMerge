@@ -2,7 +2,7 @@ package com.liquidcore7.textmerge
 
 import java.io.File
 import java.util.Objects
-import java.util.concurrent.{ExecutorService, Executors, TimeUnit}
+import java.util.concurrent.{Executors, TimeUnit}
 
 import com.liquidcore7.textmerge.chain.{ChainStore, Evaluate, Train}
 
