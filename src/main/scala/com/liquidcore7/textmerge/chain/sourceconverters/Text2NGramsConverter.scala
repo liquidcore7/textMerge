@@ -26,8 +26,8 @@ class Text2NGramsConverter(private val file: File, private val n: Int) extends T
   override def toIterable: Iterable[Word] = {
     var previousWasSentenceEnd = true
     reader.map{s => {
-        val w = Word(s, previousWasSentenceEnd, !previousWasSentenceEnd, file.getName)
-        previousWasSentenceEnd = s.trim.matches(".*[.?!]$")
+        val w = Word(s, previousWasSentenceEnd, s.trim.matches(".*[.?!]$"), file.getName)
+        previousWasSentenceEnd = w.isSentenceEnd
         w
       }
     }

@@ -13,8 +13,9 @@ class StringConverter(text: String, source: String) extends ToIterableConvertibl
 
       override def hasNext: Boolean = stringIterator.hasNext
       override def next(): Word = {
-        val word = Word(stringIterator.next, previousIsSentenceEnd, !previousIsSentenceEnd, source)
-        previousIsSentenceEnd = word.word.matches(".*[.?!]$")
+        val nextStr = stringIterator.next
+        val word = Word(nextStr, previousIsSentenceEnd, nextStr.matches(".*[.?!]$"), source)
+        previousIsSentenceEnd = word.isSentenceEnd
         word
       }
 
