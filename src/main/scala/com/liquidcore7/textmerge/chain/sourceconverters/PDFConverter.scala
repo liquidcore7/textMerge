@@ -6,7 +6,7 @@ import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import com.liquidcore7.textmerge.chain.Word
 
-class PDFConverter(file: File) extends ToIterableConvertible {
+class PDFConverter(private val file: File) extends ToIterableConvertible {
   private val source = new PdfReader(file.toString)
 
   override def toIterable: Iterable[Word] = (0 until source.getNumberOfPages)

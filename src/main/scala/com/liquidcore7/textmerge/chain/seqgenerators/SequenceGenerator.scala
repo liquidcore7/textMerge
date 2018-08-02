@@ -2,10 +2,10 @@ package com.liquidcore7.textmerge.chain.seqgenerators
 
 import com.liquidcore7.textmerge.chain.{ChainStore, Word}
 
-abstract class SequenceGenerator(chainStore: ChainStore) extends Iterator[Word] {
+abstract class SequenceGenerator(val limit: Int) extends Iterator[Word] {
   // overridable stuff
-  val limit = 5
-  val init: Word = chainStore.getRandomSentenceBegin()
+  protected val chainStore: ChainStore = ChainStore()
+  private val init: Word = chainStore.getRandomSentenceBegin()
   def pickVariant(from: IndexedSeq[Word], accordingToPrevious: List[Word]): Option[Word]
 
   private var previous: List[Word] = List()

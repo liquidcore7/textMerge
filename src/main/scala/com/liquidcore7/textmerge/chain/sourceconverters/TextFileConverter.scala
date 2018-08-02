@@ -5,7 +5,7 @@ import java.util.Scanner
 
 import com.liquidcore7.textmerge.chain.Word
 
-class TextFileConverter(file: File) extends ToIterableConvertible {
+class TextFileConverter(private val file: File) extends ToIterableConvertible {
   val scanner = new Scanner(file)
   override def toIterable: Iterable[Word] = new Iterable[Word] {
     override def iterator: Iterator[Word] = new Iterator[Word] {

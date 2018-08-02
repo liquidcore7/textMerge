@@ -4,7 +4,8 @@ import java.io.{File, FileInputStream}
 import com.liquidcore7.textmerge.chain.Word
 
 
-class Text2NGramsConverter(private val file: File, private val n: Int) extends ToIterableConvertible {
+class Text2NGramsConverter(private val file: File) extends ToIterableConvertible {
+  private var n: Int = 4
 
   class BufferedReader extends Iterable[String] with AutoCloseable {
     private val buffer: Array[Byte] = Array.ofDim(n)
@@ -21,6 +22,7 @@ class Text2NGramsConverter(private val file: File, private val n: Int) extends T
     }
   }
 
+  def setN(_n: Int): Unit = {n = _n}
   val reader: BufferedReader = new BufferedReader
 
   override def toIterable: Iterable[Word] = {

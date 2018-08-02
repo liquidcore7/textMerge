@@ -1,10 +1,8 @@
 package com.liquidcore7.textmerge.chain.seqgenerators
 
-import com.liquidcore7.textmerge.chain.{ChainStore, Word}
+import com.liquidcore7.textmerge.chain.Word
 
-class MarkovSentenceGenerator(chainStore: ChainStore) extends SequenceGenerator(chainStore) {
-  val toChangeSource: Int = 2
-  override val limit: Int = 15
+class MarkovSentenceGenerator(toChangeSource: Int) extends SequenceGenerator(limit = 15) {
 
   override def pickVariant(from: IndexedSeq[Word], accordingToPrevious: List[Word]): Option[Word] = {
     if (from.isEmpty || accordingToPrevious.last.isSentenceEnd)
